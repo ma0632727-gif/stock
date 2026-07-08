@@ -1,160 +1,193 @@
-# API Documentation - نظام الحسابات
+# توثيق API - API Documentation
 
-## Base URL
-```
-http://localhost:5000/api
-```
+## المقدمة
 
-## Accounts Endpoints
+هذا الملف يحتوي على توثيق كامل لـ API الخاص بنظام الحسابات المتكامل.
 
-### Get All Accounts
+## الإعدادات الأساسية
+
+- **Base URL**: `http://localhost:5000/api`
+- **Response Format**: JSON
+- **Authentication**: (سيتم إضافتها لاحقاً)
+
+## نقاط النهاية - Endpoints
+
+### الحسابات - Accounts
+
+#### 1. الحصول على جميع الحسابات
 ```
 GET /accounts
 ```
 
-### Get Account by ID
+**Response:**
+```json
+[
+  {
+    "id": "uuid",
+    "code": "1000",
+    "name": "Current Assets",
+    "nameAr": "الأصول المتداولة",
+    "type": "ASSET",
+    "balance": 0,
+    "isActive": true
+  }
+]
+```
+
+#### 2. الحصول على حساب واحد
 ```
 GET /accounts/:id
 ```
 
-### Create Account
+#### 3. إنشاء حساب جديد
 ```
 POST /accounts
 Content-Type: application/json
 
 {
-  "code": "1100",
-  "name": "Cash",
-  "nameAr": "النقدية",
+  "code": "1050",
+  "name": "New Account",
+  "nameAr": "حساب جديد",
   "type": "ASSET",
-  "description": "Cash and Cash Equivalents"
+  "description": "Account description"
 }
 ```
 
-### Update Account
+#### 4. تحديث حساب
 ```
 PUT /accounts/:id
 Content-Type: application/json
 
 {
   "name": "Updated Name",
-  "balance": 5000.00
+  "balance": 1000
 }
 ```
 
-### Delete Account
+#### 5. حذف حساب
 ```
 DELETE /accounts/:id
 ```
 
----
+### العمليات - Transactions
 
-## Transactions Endpoints
-
-### Get All Transactions
+#### 1. الحصول على جميع العمليات
 ```
 GET /transactions
 ```
 
-### Create Transaction
+#### 2. إنشاء عملية جديدة
 ```
 POST /transactions
 Content-Type: application/json
 
 {
-  "journalId": "journal-uuid",
-  "debitAccountId": "account-uuid",
-  "creditAccountId": "account-uuid",
-  "amount": 1000.00,
-  "description": "Sale of goods"
+  "journalId": "uuid",
+  "debitAccountId": "uuid",
+  "creditAccountId": "uuid",
+  "amount": 1000,
+  "description": "Transaction description",
+  "transactionDate": "2026-07-08"
 }
 ```
 
----
+### التقارير - Reports
 
-## Reports Endpoints
-
-### Get Balance Sheet
+#### 1. الحصول على جميع التقارير
 ```
-GET /reports/balance-sheet
-Query Parameters:
-  - startDate: YYYY-MM-DD
-  - endDate: YYYY-MM-DD
+GET /reports
 ```
 
-### Get Income Statement
+#### 2. إنشاء تقرير
 ```
-GET /reports/income-statement
-Query Parameters:
-  - startDate: YYYY-MM-DD
-  - endDate: YYYY-MM-DD
-```
-
-### Get Trial Balance
-```
-GET /reports/trial-balance
-Query Parameters:
-  - date: YYYY-MM-DD
-```
-
-### Get Cash Flow
-```
-GET /reports/cash-flow
-Query Parameters:
-  - startDate: YYYY-MM-DD
-  - endDate: YYYY-MM-DD
-```
-
----
-
-## Analysis Endpoints
-
-### Get Financial Ratios
-```
-GET /analysis/ratios
-Query Parameters:
-  - date: YYYY-MM-DD
-```
-
-### Get Trend Analysis
-```
-GET /analysis/trends
-Query Parameters:
-  - startDate: YYYY-MM-DD
-  - endDate: YYYY-MM-DD
-  - period: monthly | quarterly | yearly
-```
-
-### Get Financial Forecast
-```
-POST /analysis/forecast
+POST /reports
 Content-Type: application/json
 
 {
-  "months": 12,
-  "method": "linear_regression",
-  "baseData": {...}
+  "reportType": "BALANCE_SHEET",
+  "startDate": "2026-01-01",
+  "endDate": "2026-07-08"
 }
 ```
 
----
+#### أنواع التقارير المتاحة:
+- `BALANCE_SHEET` - الميزانية العمومية
+- `INCOME_STATEMENT` - قائمة الدخل
+- `CASH_FLOW` - قائمة التدفقات النقدية
+- `TRIAL_BALANCE` - ميزان المراجعة
+- `GENERAL_LEDGER` - الدفتر الأستاذ
 
-## Error Responses
+## أكواد الحالة - Status Codes
 
-All errors follow this format:
+- `200 OK` - تم الطلب بنجاح
+- `201 Created` - تم إنشاء مورد جديد
+- `400 Bad Request` - طلب غير صحيح
+- `404 Not Found` - المورد غير موجود
+- `500 Internal Server Error` - خطأ في الخادم
+
+## رموز الحسابات - Account Codes
+
+### الأصول (Assets)
+- `1000-1999` - الأصول
+
+### الخصوم (Liabilities)
+- `2000-2999` - الخصوم
+
+### حقوق الملكية (Equity)
+- `3000-3999` - حقوق الملكية
+
+### الإيرادات (Revenue)
+- `4000-4999` - الإيرادات
+
+### المصاريف (Expenses)
+- `5000-5999` - المصاريف
+
+## الأخطاء الشائعة
+
+### 400 Bad Request
 ```json
 {
-  "error": "Error message",
-  "code": "ERROR_CODE",
-  "status": 400
+  "error": "Missing required fields",
+  "fields": ["code", "name", "type"]
 }
 ```
 
----
+### 404 Not Found
+```json
+{
+  "error": "Account not found",
+  "id": "invalid-id"
+}
+```
 
-## Status Codes
-- `200`: Success
-- `201`: Created
-- `400`: Bad Request
-- `404`: Not Found
-- `500`: Server Error
+## أمثلة عملية
+
+### إضافة حساب جديد
+```bash
+curl -X POST http://localhost:5000/api/accounts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "1050",
+    "name": "Prepaid Expenses",
+    "nameAr": "مصاريف مدفوعة مقدماً",
+    "type": "ASSET"
+  }'
+```
+
+### الحصول على حسابات معينة
+```bash
+curl http://localhost:5000/api/accounts?type=ASSET
+```
+
+### إنشاء عملية محاسبية
+```bash
+curl -X POST http://localhost:5000/api/transactions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "journalId": "journal-id",
+    "debitAccountId": "account-id-1",
+    "creditAccountId": "account-id-2",
+    "amount": 5000,
+    "description": "Purchase of equipment"
+  }'
+```

@@ -7,11 +7,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.17.0",
-    "axios": "^1.6.2",
-    "chart.js": "^4.4.0",
-    "react-chartjs-2": "^5.2.0",
-    "antd": "^5.11.3",
-    "@ant-design/icons": "^5.2.6"
+    "antd": "^5.11.0",
+    "@ant-design/icons": "^5.2.6",
+    "axios": "^1.6.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -37,6 +35,6 @@
     ]
   },
   "devDependencies": {
-    "react-scripts": "5.0.1"
+    "react-scripts": "^5.0.1"
   }
 }

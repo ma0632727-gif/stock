@@ -1,122 +1,133 @@
-# دليل التثبيت والتشغيل
+# دليل التثبيت - Installation Guide
 
-## المتطلبات
-- Node.js 16+
-- PostgreSQL 12+
-- npm أو yarn
+## المتطلبات الأساسية
+
+### Windows
+1. **Node.js** - قم بتحميل وتثبيت [Node.js](https://nodejs.org/)
+2. **PostgreSQL** - قم بتحميل وتثبيت [PostgreSQL](https://www.postgresql.org/)
+3. **Git** - قم بتحميل وتثبيت [Git](https://git-scm.com/)
+
+### macOS
+```bash
+# استخدام Homebrew
+brew install node
+brew install postgresql
+brew install git
+```
+
+### Linux (Ubuntu/Debian)
+```bash
+sudo apt-get update
+sudo apt-get install nodejs npm postgresql git
+```
 
 ## خطوات التثبيت
 
-### 1. استنساخ المستودع
+### 1. استنساخ المشروع
 ```bash
 git clone https://github.com/ma0632727-gif/stock.git
 cd stock
 ```
 
-### 2. إعداد قاعدة البيانات
+### 2. إعداد PostgreSQL
 
-#### إنشاء قاعدة البيانات
+#### Windows:
+- افتح pgAdmin من قائمة ابدأ
+- انقر بزر الماوس الأيمن على "Servers" واختر "Create" > "Server"
+- أدخل البيانات المطلوبة
+
+#### macOS/Linux:
 ```bash
-createdb accounting_system
+# بدء خدمة PostgreSQL
+sudo systemctl start postgresql
+
+# الدخول إلى PostgreSQL
+sudo -u postgres psql
 ```
 
-#### تشغيل السكريبت الأولي
+### 3. إنشاء قاعدة البيانات
 ```bash
+creatdb -U postgres accounting_system
+```
+
+### 4. تطبيق السكريبتات
+```bash
+# تطبيق جداول قاعدة البيانات
 psql -U postgres -d accounting_system -f database/init.sql
+
+# تحميل شجرة الحسابات
 psql -U postgres -d accounting_system -f database/chart-of-accounts.sql
 ```
 
-### 3. تثبيت المكتبات - Backend
+### 5. إعداد Backend
 ```bash
 cd backend
-npm install
-```
 
-#### إعداد متغيرات البيئة
-```bash
+# نسخ ملف البيئة
 cp .env.example .env
-# ثم عدل الملف بحسب إعداداتك
-```
 
-### 4. تثبيت المكتبات - Frontend
-```bash
-cd ../frontend
+# تثبيت المكتبات
 npm install
-```
 
-### 5. تشغيل التطبيق
-
-#### Backend
-```bash
-cd backend
+# بدء الخادم
 npm run dev
 ```
 
-الخادم سيعمل على: `http://localhost:5000`
+سيبدأ الخادم على `http://localhost:5000`
 
-#### Frontend (في نافذة جديدة)
+### 6. إعداد Frontend
 ```bash
-cd frontend
+cd ../frontend
+
+# تثبيت المكتبات
+npm install
+
+# بدء التطبيق
 npm start
 ```
 
-التطبيق سيفتح على: `http://localhost:3000`
+سيفتح التطبيق على `http://localhost:3000`
 
----
+## التحقق من التثبيت
 
-## اختبار الخادم
-
-### فحص صحة الخادم
+### اختبار Backend
 ```bash
-curl http://localhost:5000/api/health
+curl http://localhost:5000/api/accounts
 ```
 
-الاستجابة المتوقعة:
-```json
-{
-  "status": "Server is running",
-  "timestamp": "2024-01-01T12:00:00.000Z"
-}
+يجب أن تحصل على استجابة JSON
+
+### اختبار Frontend
+- افتح `http://localhost:3000` في المتصفح
+- يجب أن ترى الصفحة الرئيسية للنظام
+
+## استكشاف الأخطاء
+
+### الخطأ: "Cannot find module 'express'"
+```bash
+cd backend
+npm install
 ```
 
----
-
-## حل المشاكل الشائعة
-
-### مشكلة الاتصال بقاعدة البيانات
-- تأكد من تشغيل PostgreSQL
+### الخطأ: "PostgreSQL connection failed"
+- تأكد من تشغيل خدمة PostgreSQL
 - تحقق من بيانات الاتصال في ملف `.env`
-- تأكد من وجود قاعدة البيانات
 
-### مشكلة المنافذ المشغولة
+### الخطأ: "Database does not exist"
 ```bash
-# تغيير المنفذ في .env
-PORT=5001  # أو أي منفذ آخر
+creatdb -U postgres accounting_system
 ```
 
-### تحديث المكتبات
-```bash
-npm update
-```
+## الخطوات التالية
 
----
+1. ادخل إلى `http://localhost:3000`
+2. ابدأ بإضافة الحسابات
+3. سجل العمليات المحاسبية
+4. اعرض التقارير المالية
 
-## قاعدة البيانات
+## دعم إضافي
 
-### الجداول الرئيسية
-- `accounts` - الحسابات
-- `journals` - القيود اليومية
-- `transactions` - المعاملات
-- `reports` - التقارير
-
-### العلاقات
-```
-journals ← transactions → accounts
-reports → accounts
-```
-
----
-
-## المراجع الإضافية
-- [API Documentation](docs/API_DOCUMENTATION.md)
-- [المميزات](docs/FEATURES.md)
+للحصول على مساعدة إضافية:
+- اقرأ [توثيق API](./docs/API_DOCUMENTATION.md)
+- افتح Issue على GitHub
+- تواصل معنا عبر البريد الإلكتروني
