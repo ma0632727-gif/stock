@@ -1,7 +1,10 @@
--- Create Database
+-- Create database
 CREATE DATABASE accounting_system;
 
--- Create Accounts Table
+-- Connect to database
+\c accounting_system;
+
+-- Create tables
 CREATE TABLE accounts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   code VARCHAR(20) UNIQUE NOT NULL,
@@ -13,22 +16,20 @@ CREATE TABLE accounts (
   balance DECIMAL(15, 2) DEFAULT 0,
   is_active BOOLEAN DEFAULT true,
   description TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Create Journals Table
 CREATE TABLE journals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   journal_number VARCHAR(50) UNIQUE NOT NULL,
   description TEXT,
-  journal_date DATE DEFAULT CURRENT_DATE,
+  journal_date DATE DEFAULT NOW(),
   status VARCHAR(50) DEFAULT 'DRAFT',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Create Transactions Table
 CREATE TABLE transactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   journal_id UUID NOT NULL REFERENCES journals(id),
@@ -36,12 +37,11 @@ CREATE TABLE transactions (
   credit_account_id UUID NOT NULL REFERENCES accounts(id),
   amount DECIMAL(15, 2) NOT NULL,
   description TEXT,
-  transaction_date DATE DEFAULT CURRENT_DATE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  transaction_date DATE DEFAULT NOW(),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Create Reports Table
 CREATE TABLE reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   report_type VARCHAR(50) NOT NULL,
@@ -49,14 +49,15 @@ CREATE TABLE reports (
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
   data JSONB,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Create Indexes
+-- Create indexes
+CREATE INDEX idx_accounts_code ON accounts(code);
 CREATE INDEX idx_accounts_type ON accounts(type);
-CREATE INDEX idx_accounts_parent_id ON accounts(parent_id);
-CREATE INDEX idx_transactions_journal_id ON transactions(journal_id);
-CREATE INDEX idx_transactions_debit_account ON transactions(debit_account_id);
-CREATE INDEX idx_transactions_credit_account ON transactions(credit_account_id);
-CREATE INDEX idx_reports_report_type ON reports(report_type);
+CREATE INDEX idx_journals_number ON journals(journal_number);
+CREATE INDEX idx_journals_date ON journals(journal_date);
+CREATE INDEX idx_transactions_journal ON transactions(journal_id);
+CREATE INDEX idx_transactions_accounts ON transactions(debit_account_id, credit_account_id);
+CREATE INDEX idx_reports_type ON reports(report_type);
